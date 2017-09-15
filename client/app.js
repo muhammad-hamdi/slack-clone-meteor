@@ -1,8 +1,12 @@
+import {Meteor} from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import {Messages} from '../lib/collections/messages';
 
 import './room.html';
+
+Meteor.subscribe('messages');
+Meteor.subscribe('usernames');
 
 Template.messages.helpers({
 	messages: Messages.find({}),
@@ -18,11 +22,7 @@ Template.footer.events({
 	      if (charCode == 13) {
 	        e.stopPropagation();
 
-	        Messages.insert({
-	        	text: $('.input-box_text').val(),
-	        	user: Meteor.userId(),
-	        	timestamp: Date.now(),
-	        });
+	        Meteor.call('newMessage', {text: $('.input-box_text').val()});
 
 	        $('.input-box_text').val("");
 	        return false;
