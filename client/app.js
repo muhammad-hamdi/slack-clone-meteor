@@ -2,14 +2,32 @@ import {Meteor} from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import {Messages} from '../lib/collections/messages';
+import {Channels} from '../lib/collections/channels';
 
 import './room.html';
 
+Meteor.startup(() => {
+	Session.set('channel', 'general');
+})
+
 Meteor.subscribe('messages');
 Meteor.subscribe('usernames');
+Meteor.subscribe('channels');
+
+Template.listings.helpers({
+	channels: function() {
+		return Channels.find({});
+	},
+});
 
 Template.messages.helpers({
 	messages: Messages.find({}),
+});
+
+Template.channel.events({
+	'click .channel': function(e) {
+		Session.set('channel', this.name);
+	}
 });
 
 Template.footer.events({

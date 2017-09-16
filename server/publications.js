@@ -1,8 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import {Messages} from '../lib/collections/messages';
+import {Channels} from '../lib/collections/channels';
 
 Meteor.publish('messages', function(){
 	return Messages.find();
+});
+
+Meteor.publish('channels', function () {
+    return Channels.find();
 });
 
 Meteor.publish('usernames', function(){
