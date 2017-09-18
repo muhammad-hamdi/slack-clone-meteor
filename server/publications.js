@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import {Messages} from '../lib/collections/messages';
 import {Channels} from '../lib/collections/channels';
 
-Meteor.publish('messages', function(){
-	return Messages.find();
+Meteor.publish('messages', function(channel){
+	return Messages.find({channel: channel});
 });
 
 Meteor.publish('channels', function () {

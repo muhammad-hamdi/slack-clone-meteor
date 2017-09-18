@@ -9,11 +9,3 @@ Channels.insert({
 Channels.insert({
   name: "random"
 });
-Factory.define('message', Messages, {
-    text: function() {
-        return Fake.sentence();
-    },
-    user: Meteor.users.findOne()._id,
-    timestamp: Date.now(),
-    channel: 'general'
-});

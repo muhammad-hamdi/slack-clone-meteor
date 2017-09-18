@@ -6,17 +6,35 @@ import {Channels} from '../lib/collections/channels';
 
 import './room.html';
 
-Meteor.startup(() => {
-	Session.set('channel', 'general');
-})
-
 Meteor.subscribe('messages');
 Meteor.subscribe('usernames');
 Meteor.subscribe('channels');
 
+Template.messages.onCreated(function() {
+  var self = this;
+  self.autorun(function() {
+    self.subscribe('messages', Session.get('channel'));
+  });
+});
+
+Template.header.helpers({
+	channel: function() {
+		return Session.get('channel');
+	},
+})
+
 Template.listings.helpers({
 	channels: function() {
 		return Channels.find({});
+	},
+});
+Template.channel.helpers({
+	active: function() {
+		if (Session.get('channel') === this.name) {
+			return "active";
+		} else {
+			return "";
+		}
 	},
 });
 
@@ -24,11 +42,12 @@ Template.messages.helpers({
 	messages: Messages.find({}),
 });
 
-Template.channel.events({
-	'click .channel': function(e) {
-		Session.set('channel', this.name);
-	}
-});
+Template.footer.helpers({
+	name: function() {
+		var user = Meteor.users.findOne({_id: Meteor.userId});
+		return user.username;
+	},
+})
 
 Template.footer.events({
 	'keypress input': function(e){
@@ -40,7 +59,10 @@ Template.footer.events({
 	      if (charCode == 13) {
 	        e.stopPropagation();
 
-	        Meteor.call('newMessage', {text: $('.input-box_text').val()});
+	        Meteor.call('newMessage', {
+	        	text: $('.input-box_text').val(),
+	        	channel: Session.get('channel')
+	        });
 
 	        $('.input-box_text').val("");
 	        return false;
@@ -49,7 +71,6 @@ Template.footer.events({
 	    }
 	}
 });
-
 
 Template.registerHelper("usernameFromId", function (userId) {
     var user = Meteor.users.findOne({_id: userId});
@@ -69,8 +90,4 @@ Template.registerHelper("timestampToTime", function (timestamp) {
     var seconds = "0" + date.getSeconds();
 
     return hours + ':' + minutes.substr(minutes.length-2) + ':' + seconds.substr(seconds.length-2);
-});
-
-Accounts.ui.config({
-	passwordSignupFields: 'USERNAME_AND_EMAIL',
 });

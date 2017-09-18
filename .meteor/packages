@@ -25,3 +25,5 @@ accounts-ui@1.1.9
 accounts-github@1.3.0
 github-config-ui@1.0.0
 session
+iron:router
+steeve:single-page-login
