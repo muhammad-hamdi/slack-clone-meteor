@@ -49,6 +49,12 @@ Template.footer.helpers({
 	},
 })
 
+Template.header.events({
+	'click .btn': function() {
+		Meteor.logout();
+	}
+})
+
 Template.footer.events({
 	'keypress input': function(e){
 		var inputVal = $('.input-box_text').val();
